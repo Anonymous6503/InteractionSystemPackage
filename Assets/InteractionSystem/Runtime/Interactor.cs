@@ -6,12 +6,16 @@ using UnityEngine;
 public class Interactor : MonoBehaviour
 {
 
+    [Tooltip("The radius in which the interactor will find all the possible interactables.")]
     [SerializeField] private float _interactionRadius;
+    
+    [Tooltip("The layer which  we interacting with.")]
     [SerializeField] private LayerMask _interactableLayer;
     
     private readonly Collider[] _colliderBuffer = new Collider[20];
     private int _numFound;
     
+    [Tooltip("The currently selected interactable with which the player will interact with.")]
     [SerializeField] private IInteractable _focusedInteractable;
 
     private void FixedUpdate()
@@ -19,6 +23,9 @@ public class Interactor : MonoBehaviour
         GetFocusedInteractable();
     }
 
+    /// <summary>
+    /// Check and returns the _focusedInteractable within the _interaction radius
+    /// </summary>
     private void GetFocusedInteractable()
     {
         _numFound = Physics.OverlapSphereNonAlloc(this.transform.position, _interactionRadius, _colliderBuffer, _interactableLayer);
