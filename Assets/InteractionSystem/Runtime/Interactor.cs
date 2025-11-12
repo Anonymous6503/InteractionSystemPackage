@@ -3,76 +3,88 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class Interactor : MonoBehaviour
+namespace InteractionSystem
 {
-
-    [Tooltip("The radius in which the interactor will find all the possible interactables.")]
-    [SerializeField] private float _interactionRadius;
-    
-    [Tooltip("The layer which  we interacting with.")]
-    [SerializeField] private LayerMask _interactableLayer;
-    
-    private readonly Collider[] _colliderBuffer = new Collider[20];
-    private int _numFound;
-    
-    [Tooltip("The currently selected interactable with which the player will interact with.")]
-    [SerializeField] private IInteractable _focusedInteractable;
-
-    private void FixedUpdate()
+    public class Interactor : MonoBehaviour
     {
-        GetFocusedInteractable();
-    }
+        [Tooltip("The radius in which the interactor will find all the possible interactable.")] 
+        [SerializeField] private float interactionRadius;
 
-    /// <summary>
-    /// Check and returns the _focusedInteractable within the _interaction radius
-    /// </summary>
-    private void GetFocusedInteractable()
-    {
-        _numFound = Physics.OverlapSphereNonAlloc(this.transform.position, _interactionRadius, _colliderBuffer, _interactableLayer);
+        [Tooltip("The layer which  we interacting with.")] [SerializeField]
+        private LayerMask interactableLayer;
 
-        if (_numFound == 0)
+        private Collider[] colliderBuffer = new Collider[20];
+        private int numFound;
+
+        [Tooltip("The currently selected interactable with which the player will interact with.")] 
+        [SerializeField] private IInteractable focusedInteractable;
+
+        private void FixedUpdate()
         {
-            Debug.Log("No interactables found");
-            _focusedInteractable = null;
-            return;
+            GetFocusedInteractable();
         }
 
-        IInteractable closestInteractable = null;
-        float closestDistance = float.MaxValue;
-
-        for (int i = 0; i < _numFound; i++)
+        /// <summary>
+        /// Check and returns the _focusedInteractable within the _interaction radius
+        /// </summary>
+        private void GetFocusedInteractable()
         {
-            Collider col = _colliderBuffer[i];
-            
-            if (col.TryGetComponent<IInteractable>(out IInteractable interactable))
-            {
-                float distance = Vector3.Distance(transform.position, col.transform.position);
+            numFound = Physics.OverlapSphereNonAlloc(this.transform.position, interactionRadius, colliderBuffer,
+                interactableLayer);
 
-                if (distance < closestDistance)
+            if (numFound == 0)
+            {
+                Debug.Log("No interactable found");
+                if(focusedInteractable != null)
+                    focusedInteractable.LoseFocus();
+                focusedInteractable = null;
+                return;
+            }
+
+            IInteractable closestInteractable = null;
+            float closestDistance = float.MaxValue;
+
+            for (int i = 0; i < numFound; i++)
+            {
+                Collider col = colliderBuffer[i];
+
+                if (col.TryGetComponent<IInteractable>(out IInteractable interactable))
                 {
-                    closestDistance = distance;
-                    closestInteractable = interactable;
+                    float distance = Vector3.Distance(transform.position, col.transform.position);
+
+                    if (distance < closestDistance)
+                    {
+                        closestDistance = distance;
+                        closestInteractable = interactable;
+                    }
                 }
             }
-        }
-        
-        if (closestInteractable == null)
-        {
-            _focusedInteractable = null;
-            return;
-        }
-        Debug.Log("Found interactable: " + closestInteractable);
-        
-        _focusedInteractable = closestInteractable;
-    }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            if (_focusedInteractable != null)
+            if (closestInteractable == null)
             {
-                _focusedInteractable.Interact();
+                focusedInteractable = null;
+                return;
+            }
+
+            Debug.Log("Found interactable: " + closestInteractable);
+
+            if (focusedInteractable != closestInteractable)
+            {
+                if(focusedInteractable != null)
+                    focusedInteractable.LoseFocus();
+                focusedInteractable = closestInteractable;
+                focusedInteractable.GainFocus();
+            }
+        }
+
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                if (focusedInteractable != null)
+                {
+                    focusedInteractable.Interact();
+                }
             }
         }
     }

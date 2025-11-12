@@ -1,21 +1,38 @@
-using System;
+
 using System.Collections.Generic;
+using InteractionSystem.Runtime.InteractionConditions;
+using InteractionSystem.Runtime.Strategy;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.Serialization;
 
-public class Interactable : MonoBehaviour, IInteractable
+namespace InteractionSystem.Runtime
 {
-    [Tooltip("The current interaction Type on this particular interactable.")]
-    [SerializeReference] public InteractionStrategy _interactionType;
-
-    private void Start()
+    public class Interactable : MonoBehaviour, IInteractable
     {
-        this.gameObject.layer = LayerMask.NameToLayer("Interactable");
-    }
+        [Tooltip("The current interaction Type on this particular interactable.")] [SerializeReference]
+        public InteractionStrategy interactionType;
+        
+        [SerializeField] private UnityEvent OnFocusGained, OnFocusLost;
 
-    public void Interact()
-    {
-        _interactionType.Execute(this.gameObject);
+        public void Interact()
+        {
+            interactionType.Execute(this.gameObject);
+        }
+
+        public void GainFocus()
+        {
+            OnFocusGained.Invoke();
+            GetInteractionPrompt();
+        }
+
+        public void LoseFocus()
+        {
+            OnFocusLost.Invoke();
+        }
+
+        public string GetInteractionPrompt()
+        {
+            return interactionType.interactionPrompt;
+        }
     }
 }

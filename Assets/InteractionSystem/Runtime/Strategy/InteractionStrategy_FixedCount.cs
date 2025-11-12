@@ -1,24 +1,37 @@
+using InteractionSystem.Runtime.Strategy;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class InteractionStrategy_FixedCount : InteractionStrategy
+namespace InteractionSystem
 {
-    [SerializeField] private string _strategyName = "Fixed Count Strategy";
-
-    [SerializeField] private UnityEvent OnInteraction; 
-    
-    [Tooltip("Total number of times interaction will be availabale for")]
-    [SerializeField] private int _totalCount = 3;
-
-    
-    public override void Execute(GameObject gameObjectToInteractWith)
+    public class InteractionStrategy_FixedCount : InteractionStrategy
     {
-        if (_totalCount > 0)
+        [SerializeField] private string _strategyName = "Fixed Count Strategy";
+
+        [SerializeField] private UnityEvent OnInteraction;
+
+        [Tooltip("Total number of times interaction will be availabale for")] [SerializeField]
+        private int _totalCount = 3;
+
+
+        public override void Execute(GameObject gameObjectToInteractWith)
         {
-            OnInteraction.Invoke();
-            _totalCount--;
-            Debug.Log("Used Once");
-            Debug.Log("Remaining Count: " + (_totalCount));
+            if (hasConditions)
+            {
+                foreach (var ic in allConditions)
+                {
+                    if (!ic.isConditionsMet())
+                        return;
+                }
+            }
+            
+            if (_totalCount > 0)
+            {
+                OnInteraction.Invoke();
+                _totalCount--;
+                Debug.Log("Used Once");
+                Debug.Log("Remaining Count: " + (_totalCount));
+            }
         }
     }
 }

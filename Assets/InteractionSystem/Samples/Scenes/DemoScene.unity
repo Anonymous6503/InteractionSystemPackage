@@ -314,7 +314,7 @@ SphereCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
@@ -385,8 +385,8 @@ GameObject:
   - component: {fileID: 230286023}
   - component: {fileID: 230286022}
   - component: {fileID: 230286021}
-  - component: {fileID: 230286024}
   - component: {fileID: 230286025}
+  - component: {fileID: 230286026}
   m_Layer: 6
   m_Name: Door
   m_TagString: Untagged
@@ -447,7 +447,28 @@ Transform:
   - {fileID: 752022285}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &230286024
+--- !u!65 &230286025
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 230286020}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.25, y: 2.1, z: 1.6}
+  m_Center: {x: 0, y: 1.05, z: 0}
+--- !u!114 &230286026
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -458,15 +479,25 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9596c19134825a54796a459602ee6f84, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: InteractionSystem.Runtime::Interactable
-  _interactionType:
-    rid: 3549671138612216117
+  m_EditorClassIdentifier: InteractionSystem.Runtime::InteractionSystem.Runtime.Interactable
+  interactionType:
+    rid: 3549671319587258510
+  OnFocusGained:
+    m_PersistentCalls:
+      m_Calls: []
+  OnFocusLost:
+    m_PersistentCalls:
+      m_Calls: []
   references:
     version: 2
     RefIds:
-    - rid: 3549671138612216117
-      type: {class: InteractionStrategy_Toggle, ns: , asm: InteractionSystem.Runtime}
+    - rid: 3549671319587258510
+      type: {class: InteractionStrategy_Toggle, ns: InteractionSystem, asm: InteractionSystem.Runtime}
       data:
+        interactionPrompt: Interact
+        hasConditions: 1
+        allConditions:
+        - rid: 3549671319587258516
         _strategyName: Toggle Interaction
         OnToggleOnAction:
           m_PersistentCalls:
@@ -498,27 +529,11 @@ MonoBehaviour:
                 m_StringArgument: 
                 m_BoolArgument: 0
               m_CallState: 2
---- !u!65 &230286025
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 230286020}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 0.25, y: 2.1, z: 1.6}
-  m_Center: {x: 0, y: 1.05, z: 0}
+    - rid: 3549671319587258516
+      type: {class: IC_BooleanCheck, ns: , asm: InteractionSystem.Runtime}
+      data:
+        booleanConditionSo: {fileID: 11400000, guid: c99560477aafbe742896f82895e5dfb8, type: 2}
+        requiredValue: 1
 --- !u!1 &351125750
 GameObject:
   m_ObjectHideFlags: 0
@@ -1330,8 +1345,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be8df53674086884da65fca5772d47dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: InteractionSystem.Runtime::Interactor
-  _interactionRadius: 3
-  _interactableLayer:
+  interactionRadius: 3
+  interactableLayer:
     serializedVersion: 2
     m_Bits: 64
 --- !u!114 &1282579658
@@ -1348,8 +1363,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ThirdPersonController
   moveSpeed: 5
   rotationSmoothTime: 0.1
-  jumpHeight: 2
-  gravity: -9.81
   cameraTransform: {fileID: 0}
   cameraOffset: {x: 0, y: 2, z: -4}
   mouseSensitivity: 150

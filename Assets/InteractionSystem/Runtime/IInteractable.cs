@@ -1,4 +1,13 @@
-public interface IInteractable
+namespace InteractionSystem
 {
-    public void Interact();
+    public interface IInteractable
+    {
+        public void Interact();
+        
+        public void GainFocus();
+        
+        public void LoseFocus();
+
+        public string GetInteractionPrompt();
+    }
 }
